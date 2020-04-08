@@ -15,8 +15,5 @@ public class ViewModel extends BaseObservable {
 
     public final ObservableField<Boolean> etf = new ObservableField<>();
 
-
     public final ObservableField<String> buyServiceCharge = new ObservableField<>();
-
-
 }

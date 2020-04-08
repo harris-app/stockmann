@@ -8,10 +8,6 @@
         <variable
             name="viewModel"
             type="cn.savory.stockman.ViewModel" />
-
-        <variable
-            name="activity"
-            type="cn.savory.stockman.MainActivity" />
     </data>
 
     <LinearLayout
@@ -92,12 +88,6 @@
                 android:text="@={viewModel.sellCount}"
                 android:inputType="number" />
         </LinearLayout>
-
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="@{(thisView) -> activity.calc()}"
-            android:text="Button" />
 
         <LinearLayout
             android:layout_width="match_parent"

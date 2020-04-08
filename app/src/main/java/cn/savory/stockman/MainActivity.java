@@ -2,8 +2,10 @@ package cn.savory.stockman;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
+import androidx.databinding.Observable;
 
 import android.os.Bundle;
+import android.text.Editable;
 import android.view.View;
 import android.widget.Toast;
 
@@ -20,19 +22,24 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         binding = DataBindingUtil.setContentView(this, R.layout.layout_activity_main);
-        binding.setViewModel(new ViewModel());
-        binding.setActivity(this);
+
+        ViewModel viewModel = new ViewModel();
+        viewModel.buyMoney.addOnPropertyChangedCallback(propertyChangedCallback);
+        viewModel.buyCount.addOnPropertyChangedCallback(propertyChangedCallback);
+        viewModel.sellMoney.addOnPropertyChangedCallback(propertyChangedCallback);
+        viewModel.sellCount.addOnPropertyChangedCallback(propertyChangedCallback);
+        binding.setViewModel(viewModel);
     }
 
-    public void calc() {
-        ViewModel viewModel = binding.getViewModel();
-        if (viewModel == null) {
-            return;
+    private final Observable.OnPropertyChangedCallback propertyChangedCallback = new Observable.OnPropertyChangedCallback() {
+        @Override
+        public void onPropertyChanged(Observable sender, int propertyId) {
+            ViewModel viewModel = binding.getViewModel();
+
+            Double buyServiceCharge = Calculator.calcServiceCharge(toDouble(viewModel.buyMoney.get()), toInteger(viewModel.buyCount.get()));
+            viewModel.buyServiceCharge.set(String.valueOf(buyServiceCharge));
         }
-
-        Double buyServiceCharge = Calculator.calcServiceCharge(toDouble(viewModel.buyMoney.get()), toInteger(viewModel.buyCount.get()));
-        viewModel.buyServiceCharge.set(String.valueOf(buyServiceCharge));
-    }
+    };
 
     private Double toDouble(String text) {
 
