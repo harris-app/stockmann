@@ -37,9 +37,9 @@ public class MainActivity extends AppCompatActivity {
             ViewModel viewModel = binding.getViewModel();
 
             BigDecimal buyMoney = toBigDecimal(viewModel.buyMoney.get());
-            Integer buyCount = toInteger(viewModel.buyCount.get());
+            Integer buyCount = toInteger(viewModel.buyCount.get()) * 100;
             BigDecimal sellMoney = toBigDecimal(viewModel.sellMoney.get());
-            Integer sellCount = toInteger(viewModel.sellCount.get());
+            Integer sellCount = toInteger(viewModel.sellCount.get()) * 100;
             Boolean etf = viewModel.etf.get();
 
             //买入 手续费
@@ -101,13 +101,13 @@ public class MainActivity extends AppCompatActivity {
     private Integer toInteger(String text) {
 
         if (Strings.isNullOrEmpty(text)) {
-            return null;
+            return 0;
         }
 
         try {
             return Integer.parseInt(text);
         } catch (NumberFormatException e) {
-            return null;
+            return 0;
         }
     }
 
