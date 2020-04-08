@@ -23,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
         binding = DataBindingUtil.setContentView(this, R.layout.layout_activity_main);
 
         ViewModel viewModel = new ViewModel();
+        viewModel.baseMoney.addOnPropertyChangedCallback(propertyChangedCallback);
         viewModel.buyMoney.addOnPropertyChangedCallback(propertyChangedCallback);
         viewModel.buyCount.addOnPropertyChangedCallback(propertyChangedCallback);
         viewModel.sellMoney.addOnPropertyChangedCallback(propertyChangedCallback);
@@ -36,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
         public void onPropertyChanged(Observable sender, int propertyId) {
             ViewModel viewModel = binding.getViewModel();
 
+            BigDecimal baseMoney = toBigDecimal(viewModel.baseMoney.get());
             BigDecimal buyMoney = toBigDecimal(viewModel.buyMoney.get());
             Integer buyCount = toInteger(viewModel.buyCount.get()) * 100;
             BigDecimal sellMoney = toBigDecimal(viewModel.sellMoney.get());
@@ -74,6 +76,12 @@ public class MainActivity extends AppCompatActivity {
                 totalWin = sellTotal.subtract(buyTotal).subtract(totalFee);
             }
             viewModel.totalWin.set(fromBigDecimal(totalWin));
+
+//            if (positive(baseMoney) && positive(buyMoney) && positive(buyCount)) {
+//                BigDecimal buyDelta = buyMoney.subtract(baseMoney).divide(baseMoney).setScale(2, ROUND_HALF_UP);
+//
+//            }
+
         }
     };
 
