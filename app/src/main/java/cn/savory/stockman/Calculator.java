@@ -55,7 +55,7 @@ public class Calculator {
      * @param buyCount 股数
      * @return 手续费
      */
-    public static Double calcTransferFee(Double buyMoney, Double buyCount, Boolean etf) {
+    public static Double calcTransferFee(Double buyMoney, Integer buyCount, Boolean etf) {
 
         if (buyMoney == null || buyMoney <= 0 || buyCount == null || buyCount == 0) {
             return null;
