@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <variable
             name="viewModel"
             type="cn.savory.stockman.ViewModel" />
@@ -30,8 +29,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:text="@={viewModel.buyMoney}"
-                android:inputType="number|numberDecimal" />
+                android:inputType="number|numberDecimal"
+                android:text="@={viewModel.buyMoney}" />
         </LinearLayout>
 
         <LinearLayout
@@ -48,8 +47,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:text="@={viewModel.buyCount}"
-                android:inputType="number" />
+                android:inputType="number"
+                android:text="@={viewModel.buyCount}" />
         </LinearLayout>
 
         <LinearLayout
@@ -67,8 +66,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:text="@={viewModel.sellMoney}"
-                android:inputType="number|numberDecimal" />
+                android:inputType="number|numberDecimal"
+                android:text="@={viewModel.sellMoney}" />
         </LinearLayout>
 
         <LinearLayout
@@ -85,8 +84,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:text="@={viewModel.sellCount}"
-                android:inputType="number" />
+                android:inputType="number"
+                android:text="@={viewModel.sellCount}" />
         </LinearLayout>
 
         <LinearLayout
@@ -102,7 +101,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@{viewModel.buyServiceCharge}"/>
+                android:text="@{viewModel.buyServiceCharge}" />
         </LinearLayout>
 
     </LinearLayout>
