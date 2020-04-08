@@ -35,7 +35,7 @@ public class Calculator {
     public static BigDecimal calcServiceCharge(BigDecimal buyMoney, Integer buyCount) {
 
         if (buyMoney == null || buyMoney.doubleValue() <= 0 || buyCount == null || buyCount == 0) {
-            return null;
+            return BigDecimal.ZERO;
         }
 
         BigDecimal serviceCharge = buyMoney.multiply(BigDecimal.valueOf(buyCount)).multiply(serviceChargeRate);
@@ -58,11 +58,11 @@ public class Calculator {
     public static BigDecimal calcTransferFee(BigDecimal buyMoney, Integer buyCount, Boolean etf) {
 
         if (buyMoney == null || buyMoney.doubleValue() <= 0 || buyCount == null || buyCount == 0) {
-            return null;
+            return BigDecimal.ZERO;
         }
 
         if (etf != null && etf) {
-            return null;
+            return BigDecimal.ZERO;
         }
 
         BigDecimal transferFee = buyMoney.multiply(BigDecimal.valueOf(buyCount)).multiply(transferFeeRate);
@@ -81,7 +81,7 @@ public class Calculator {
     public static BigDecimal calcStampTax(BigDecimal sellMoney, Integer sellCount) {
 
         if (sellMoney == null || sellMoney.doubleValue() <= 0 || sellCount == null || sellCount == 0) {
-            return null;
+            return BigDecimal.ZERO;
         }
 
         BigDecimal stampTax = sellMoney.multiply(BigDecimal.valueOf(sellCount)).multiply(stampTaxRate);

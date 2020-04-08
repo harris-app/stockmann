@@ -52,15 +52,15 @@ public class MainActivity extends AppCompatActivity {
 
             //卖出 手续费
             BigDecimal sellServiceCharge = Calculator.calcServiceCharge(sellMoney, sellCount);
-            viewModel.buyServiceCharge.set(fromBigDecimal(buyServiceCharge));
+            viewModel.sellServiceCharge.set(fromBigDecimal(buyServiceCharge));
 
             //卖出 过户费
             BigDecimal sellTransferFee = Calculator.calcTransferFee(sellMoney, sellCount, etf);
-            viewModel.buyTransferFee.set(fromBigDecimal(buyTransferFee));
+            viewModel.sellTransferFee.set(fromBigDecimal(buyTransferFee));
 
             //卖出 印花税
             BigDecimal sellStampTax = Calculator.calcStampTax(sellMoney, sellCount);
-            viewModel.buyTransferFee.set(fromBigDecimal(buyTransferFee));
+            viewModel.sellStampTax.set(fromBigDecimal(buyTransferFee));
 
             //手续费 合计
             BigDecimal totalFee = buyServiceCharge.add(buyTransferFee).add(sellServiceCharge).add(sellTransferFee).add(sellStampTax);
@@ -116,6 +116,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private boolean positive(Integer value) {
-        return value != null && value.intValue() > 0;
+        return value != null && value > 0;
     }
 }
