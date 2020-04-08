@@ -8,6 +8,8 @@ import androidx.databinding.Observable;
 
 import com.google.common.base.Strings;
 
+import java.math.BigDecimal;
+
 import cn.savory.stockman.databinding.LayoutActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
@@ -34,46 +36,48 @@ public class MainActivity extends AppCompatActivity {
         public void onPropertyChanged(Observable sender, int propertyId) {
             ViewModel viewModel = binding.getViewModel();
 
-            Double buyMoney = toDouble(viewModel.buyMoney.get());
+            BigDecimal buyMoney = toBigDecimal(viewModel.buyMoney.get());
             Integer buyCount = toInteger(viewModel.buyCount.get());
-            Double sellMoney = toDouble(viewModel.sellMoney.get());
+            BigDecimal sellMoney = toBigDecimal(viewModel.sellMoney.get());
             Integer sellCount = toInteger(viewModel.sellCount.get());
             Boolean etf = viewModel.etf.get();
 
             //买入 手续费
-            Double buyServiceCharge = Calculator.calcServiceCharge(buyMoney, buyCount);
-            viewModel.buyServiceCharge.set(fromDouble(buyServiceCharge));
+            BigDecimal buyServiceCharge = Calculator.calcServiceCharge(buyMoney, buyCount);
+            viewModel.buyServiceCharge.set(fromBigDecimal(buyServiceCharge));
 
             //买入 过户费
-            Double buyTransferFee = Calculator.calcTransferFee(buyMoney, buyCount, etf);
-            viewModel.buyTransferFee.set(fromDouble(buyTransferFee));
+            BigDecimal buyTransferFee = Calculator.calcTransferFee(buyMoney, buyCount, etf);
+            viewModel.buyTransferFee.set(fromBigDecimal(buyTransferFee));
 
             //卖出 手续费
-            Double sellServiceCharge = Calculator.calcServiceCharge(sellMoney, sellCount);
-            viewModel.buyServiceCharge.set(fromDouble(buyServiceCharge));
+            BigDecimal sellServiceCharge = Calculator.calcServiceCharge(sellMoney, sellCount);
+            viewModel.buyServiceCharge.set(fromBigDecimal(buyServiceCharge));
 
             //卖出 过户费
-            Double sellTransferFee = Calculator.calcTransferFee(sellMoney, sellCount, etf);
-            viewModel.buyTransferFee.set(fromDouble(buyTransferFee));
+            BigDecimal sellTransferFee = Calculator.calcTransferFee(sellMoney, sellCount, etf);
+            viewModel.buyTransferFee.set(fromBigDecimal(buyTransferFee));
 
             //卖出 印花税
-            Double sellStampTax = Calculator.calcStampTax(sellMoney, sellCount);
-            viewModel.buyTransferFee.set(fromDouble(buyTransferFee));
+            BigDecimal sellStampTax = Calculator.calcStampTax(sellMoney, sellCount);
+            viewModel.buyTransferFee.set(fromBigDecimal(buyTransferFee));
 
             //手续费 合计
-            Double totalFee = buyServiceCharge + buyTransferFee + sellServiceCharge + sellTransferFee + sellStampTax;
-            viewModel.totalFee.set(fromDouble(totalFee));
+            BigDecimal totalFee = buyServiceCharge.add(buyTransferFee).add(sellServiceCharge).add(sellTransferFee).add(sellStampTax);
+            viewModel.totalFee.set(fromBigDecimal(totalFee));
 
             //做T差价
-            Double totalWin = null;
-            if (buyMoney != null && buyCount != null && sellMoney != null && sellCount != null) {
-                totalWin = sellMoney * sellCount - buyMoney * buyCount - totalFee;
+            BigDecimal totalWin = null;
+            if (positive(buyMoney) && positive(buyCount) && positive(sellMoney) && positive(sellCount)) {
+                BigDecimal buyTotal = buyMoney.multiply(BigDecimal.valueOf(buyCount));
+                BigDecimal sellTotal = sellMoney.multiply(BigDecimal.valueOf(sellCount));
+                totalWin = sellTotal.subtract(buyTotal).subtract(totalFee);
             }
-            viewModel.totalWin.set(fromDouble(totalWin));
+            viewModel.totalWin.set(fromBigDecimal(totalWin));
         }
     };
 
-    private String fromDouble(Double value) {
+    private String fromBigDecimal(BigDecimal value) {
         if (value == null) {
             return "0";
         }
@@ -81,14 +85,14 @@ public class MainActivity extends AppCompatActivity {
         return String.valueOf(value);
     }
 
-    private Double toDouble(String text) {
+    private BigDecimal toBigDecimal(String text) {
 
         if (Strings.isNullOrEmpty(text)) {
-            return null;
+            return BigDecimal.ZERO;
         }
 
         try {
-            return Double.parseDouble(text);
+            return BigDecimal.valueOf(Double.parseDouble(text));
         } catch (NumberFormatException e) {
             return null;
         }
@@ -105,5 +109,13 @@ public class MainActivity extends AppCompatActivity {
         } catch (NumberFormatException e) {
             return null;
         }
+    }
+
+    private boolean positive(BigDecimal value) {
+        return value != null && value.doubleValue() > 0;
+    }
+
+    private boolean positive(Integer value) {
+        return value != null && value.intValue() > 0;
     }
 }

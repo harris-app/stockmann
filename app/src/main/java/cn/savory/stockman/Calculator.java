@@ -32,19 +32,19 @@ public class Calculator {
      * @param buyCount 股数
      * @return 手续费
      */
-    public static Double calcServiceCharge(Double buyMoney, Integer buyCount) {
+    public static BigDecimal calcServiceCharge(BigDecimal buyMoney, Integer buyCount) {
 
-        if (buyMoney == null || buyMoney <= 0 || buyCount == null || buyCount == 0) {
+        if (buyMoney == null || buyMoney.doubleValue() <= 0 || buyCount == null || buyCount == 0) {
             return null;
         }
 
-        BigDecimal serviceCharge = BigDecimal.valueOf(buyMoney).multiply(BigDecimal.valueOf(buyCount)).multiply(serviceChargeRate);
+        BigDecimal serviceCharge = buyMoney.multiply(BigDecimal.valueOf(buyCount)).multiply(serviceChargeRate);
         if (serviceCharge.compareTo(minServiceChargeRate) < 0) {
             serviceCharge = minServiceChargeRate;
         }
         serviceCharge = serviceCharge.setScale(2, BigDecimal.ROUND_HALF_UP);
 
-        return serviceCharge.doubleValue();
+        return serviceCharge;
     }
 
     /**
@@ -55,9 +55,9 @@ public class Calculator {
      * @param buyCount 股数
      * @return 手续费
      */
-    public static Double calcTransferFee(Double buyMoney, Integer buyCount, Boolean etf) {
+    public static BigDecimal calcTransferFee(BigDecimal buyMoney, Integer buyCount, Boolean etf) {
 
-        if (buyMoney == null || buyMoney <= 0 || buyCount == null || buyCount == 0) {
+        if (buyMoney == null || buyMoney.doubleValue() <= 0 || buyCount == null || buyCount == 0) {
             return null;
         }
 
@@ -65,10 +65,10 @@ public class Calculator {
             return null;
         }
 
-        BigDecimal transferFee = BigDecimal.valueOf(buyMoney).multiply(BigDecimal.valueOf(buyCount)).multiply(transferFeeRate);
+        BigDecimal transferFee = buyMoney.multiply(BigDecimal.valueOf(buyCount)).multiply(transferFeeRate);
         transferFee = transferFee.setScale(2, BigDecimal.ROUND_UP);
 
-        return transferFee.doubleValue();
+        return transferFee;
     }
 
     /**
@@ -78,15 +78,15 @@ public class Calculator {
      * @param sellCount
      * @return
      */
-    public static Double calcStampTax(Double sellMoney, Integer sellCount) {
+    public static BigDecimal calcStampTax(BigDecimal sellMoney, Integer sellCount) {
 
-        if (sellMoney == null || sellMoney <= 0 || sellCount == null || sellCount == 0) {
+        if (sellMoney == null || sellMoney.doubleValue() <= 0 || sellCount == null || sellCount == 0) {
             return null;
         }
 
-        BigDecimal stampTax = BigDecimal.valueOf(sellMoney).multiply(BigDecimal.valueOf(sellCount)).multiply(stampTaxRate);
+        BigDecimal stampTax = sellMoney.multiply(BigDecimal.valueOf(sellCount)).multiply(stampTaxRate);
         stampTax = stampTax.setScale(2, BigDecimal.ROUND_HALF_UP);
 
-        return stampTax.doubleValue();
+        return stampTax;
     }
 }
