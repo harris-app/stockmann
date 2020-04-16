@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
 
             //卖出 印花税
             BigDecimal sellStampTax = Calculator.calcStampTax(sellMoney, sellCount);
-            viewModel.sellStampTax.set(fromBigDecimal(buyTransferFee));
+            viewModel.sellStampTax.set(fromBigDecimal(sellStampTax));
 
             //手续费 合计
             BigDecimal totalFee = buyServiceCharge.add(buyTransferFee).add(sellServiceCharge).add(sellTransferFee).add(sellStampTax);
