@@ -6,11 +6,6 @@ import androidx.databinding.ObservableField;
 public class ViewModel extends BaseObservable {
 
     /**
-     * 开盘价
-     */
-    public final ObservableField<String> baseMoney = new ObservableField<>();
-
-    /**
      * 买入单价
      */
     public final ObservableField<String> buyMoney = new ObservableField<>();
@@ -24,11 +19,6 @@ public class ViewModel extends BaseObservable {
      * 卖出单价
      */
     public final ObservableField<String> sellMoney = new ObservableField<>();
-
-    /**
-     * 卖出股数
-     */
-    public final ObservableField<String> sellCount = new ObservableField<>();
 
     /**
      * 是否是ETF

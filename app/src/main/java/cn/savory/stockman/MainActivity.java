@@ -23,11 +23,9 @@ public class MainActivity extends AppCompatActivity {
         binding = DataBindingUtil.setContentView(this, R.layout.layout_activity_main);
 
         ViewModel viewModel = new ViewModel();
-        viewModel.baseMoney.addOnPropertyChangedCallback(propertyChangedCallback);
         viewModel.buyMoney.addOnPropertyChangedCallback(propertyChangedCallback);
         viewModel.buyCount.addOnPropertyChangedCallback(propertyChangedCallback);
         viewModel.sellMoney.addOnPropertyChangedCallback(propertyChangedCallback);
-        viewModel.sellCount.addOnPropertyChangedCallback(propertyChangedCallback);
         viewModel.etf.addOnPropertyChangedCallback(propertyChangedCallback);
         binding.setViewModel(viewModel);
     }
@@ -37,11 +35,10 @@ public class MainActivity extends AppCompatActivity {
         public void onPropertyChanged(Observable sender, int propertyId) {
             ViewModel viewModel = binding.getViewModel();
 
-            BigDecimal baseMoney = toBigDecimal(viewModel.baseMoney.get());
             BigDecimal buyMoney = toBigDecimal(viewModel.buyMoney.get());
             Integer buyCount = toInteger(viewModel.buyCount.get()) * 100;
             BigDecimal sellMoney = toBigDecimal(viewModel.sellMoney.get());
-            Integer sellCount = toInteger(viewModel.sellCount.get()) * 100;
+            Integer sellCount = toInteger(viewModel.buyCount.get()) * 100;
             Boolean etf = viewModel.etf.get();
 
             //买入 手续费
