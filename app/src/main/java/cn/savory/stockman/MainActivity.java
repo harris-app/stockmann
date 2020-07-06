@@ -51,11 +51,11 @@ public class MainActivity extends AppCompatActivity {
 
             //卖出 手续费
             BigDecimal sellServiceCharge = Calculator.calcServiceCharge(sellMoney, sellCount);
-            viewModel.sellServiceCharge.set(fromBigDecimal(buyServiceCharge));
+            viewModel.sellServiceCharge.set(fromBigDecimal(sellServiceCharge));
 
             //卖出 过户费
             BigDecimal sellTransferFee = Calculator.calcTransferFee(sellMoney, sellCount, etf);
-            viewModel.sellTransferFee.set(fromBigDecimal(buyTransferFee));
+            viewModel.sellTransferFee.set(fromBigDecimal(sellTransferFee));
 
             //卖出 印花税
             BigDecimal sellStampTax = Calculator.calcStampTax(sellMoney, sellCount);
