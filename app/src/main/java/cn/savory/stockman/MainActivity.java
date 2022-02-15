@@ -1,86 +1,110 @@
 package cn.savory.stockman;
 
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.databinding.DataBindingUtil;
-import androidx.databinding.Observable;
+import androidx.appcompat.widget.SwitchCompat;
 
 import com.google.common.base.Strings;
 
 import java.math.BigDecimal;
 
-import cn.savory.stockman.databinding.LayoutActivityMainBinding;
-
 public class MainActivity extends AppCompatActivity {
 
-    LayoutActivityMainBinding binding;
+    private StockService stockService = new StockService();
+
+    private EditText buyMoneyEditText;
+    private EditText buyCountEditText;
+    private EditText sellMoneyEditText;
+    private SwitchCompat eftSwitchCompat;
+
+    private TextView buyServiceChargeTextView;
+    private TextView buyTransferFeeTextView;
+    private TextView sellServiceChargeTextView;
+    private TextView sellTransferFeeTextView;
+    private TextView sellStampTaxTextView;
+    private TextView totalFeeTextView;
+    private TextView totalWinTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.layout_activity_main);
 
-        binding = DataBindingUtil.setContentView(this, R.layout.layout_activity_main);
+        buyMoneyEditText = findViewById(R.id.buyMoney);
+        buyCountEditText = findViewById(R.id.buyCount);
+        sellMoneyEditText = findViewById(R.id.sellMoney);
+        eftSwitchCompat = findViewById(R.id.etf);
 
-        ViewModel viewModel = new ViewModel();
-        viewModel.buyMoney.addOnPropertyChangedCallback(propertyChangedCallback);
-        viewModel.buyCount.addOnPropertyChangedCallback(propertyChangedCallback);
-        viewModel.sellMoney.addOnPropertyChangedCallback(propertyChangedCallback);
-        viewModel.etf.addOnPropertyChangedCallback(propertyChangedCallback);
-        binding.setViewModel(viewModel);
+        buyServiceChargeTextView = findViewById(R.id.buyServiceCharge);
+        buyTransferFeeTextView = findViewById(R.id.buyTransferFee);
+        sellServiceChargeTextView = findViewById(R.id.sellServiceCharge);
+        sellTransferFeeTextView = findViewById(R.id.sellTransferFee);
+        sellStampTaxTextView = findViewById(R.id.sellStampTax);
+        totalFeeTextView = findViewById(R.id.totalFee);
+        totalWinTextView = findViewById(R.id.totalWin);
+
+        buyMoneyEditText.addTextChangedListener(textWatcher);
+        sellMoneyEditText.addTextChangedListener(textWatcher);
+        buyCountEditText.addTextChangedListener(textWatcher);
     }
 
-    private final Observable.OnPropertyChangedCallback propertyChangedCallback = new Observable.OnPropertyChangedCallback() {
+    private final TextWatcher textWatcher = new TextWatcher() {
         @Override
-        public void onPropertyChanged(Observable sender, int propertyId) {
-            ViewModel viewModel = binding.getViewModel();
-
-            BigDecimal buyMoney = toBigDecimal(viewModel.buyMoney.get());
-            Integer buyCount = toInteger(viewModel.buyCount.get()) * 100;
-            BigDecimal sellMoney = toBigDecimal(viewModel.sellMoney.get());
-            Integer sellCount = toInteger(viewModel.buyCount.get()) * 100;
-            Boolean etf = viewModel.etf.get();
-
-            //买入 手续费
-            BigDecimal buyServiceCharge = Calculator.calcServiceCharge(buyMoney, buyCount);
-            viewModel.buyServiceCharge.set(fromBigDecimal(buyServiceCharge));
-
-            //买入 过户费
-            BigDecimal buyTransferFee = Calculator.calcTransferFee(buyMoney, buyCount, etf);
-            viewModel.buyTransferFee.set(fromBigDecimal(buyTransferFee));
-
-            //卖出 手续费
-            BigDecimal sellServiceCharge = Calculator.calcServiceCharge(sellMoney, sellCount);
-            viewModel.sellServiceCharge.set(fromBigDecimal(sellServiceCharge));
-
-            //卖出 过户费
-            BigDecimal sellTransferFee = Calculator.calcTransferFee(sellMoney, sellCount, etf);
-            viewModel.sellTransferFee.set(fromBigDecimal(sellTransferFee));
-
-            //卖出 印花税
-            BigDecimal sellStampTax = Calculator.calcStampTax(sellMoney, sellCount);
-            viewModel.sellStampTax.set(fromBigDecimal(sellStampTax));
-
-            //手续费 合计
-            BigDecimal totalFee = buyServiceCharge.add(buyTransferFee).add(sellServiceCharge).add(sellTransferFee).add(sellStampTax);
-            viewModel.totalFee.set(fromBigDecimal(totalFee));
-
-            //做T差价
-            BigDecimal totalWin = null;
-            if (positive(buyMoney) && positive(buyCount) && positive(sellMoney) && positive(sellCount)) {
-                BigDecimal buyTotal = buyMoney.multiply(BigDecimal.valueOf(buyCount));
-                BigDecimal sellTotal = sellMoney.multiply(BigDecimal.valueOf(sellCount));
-                totalWin = sellTotal.subtract(buyTotal).subtract(totalFee);
-            }
-            viewModel.totalWin.set(fromBigDecimal(totalWin));
-
-//            if (positive(baseMoney) && positive(buyMoney) && positive(buyCount)) {
-//                BigDecimal buyDelta = buyMoney.subtract(baseMoney).divide(baseMoney).setScale(2, ROUND_HALF_UP);
-//
-//            }
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
         }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            process();
+        }
     };
+
+    private void process() {
+        CalcRequest request = prepareRequest();
+
+        CalcResponse response = stockService.calc(request);
+
+        buyServiceChargeTextView.setText(fromBigDecimal(response.getBuyServiceCharge()));
+        buyTransferFeeTextView.setText(fromBigDecimal(response.getBuyTransferFee()));
+        sellServiceChargeTextView.setText(fromBigDecimal(response.getSellServiceCharge()));
+        sellTransferFeeTextView.setText(fromBigDecimal(response.getSellTransferFee()));
+        sellStampTaxTextView.setText(fromBigDecimal(response.getSellStampTax()));
+        totalFeeTextView.setText(fromBigDecimal(response.getTotalFee()));
+        totalWinTextView.setText(fromBigDecimal(response.getTotalWin()));
+    }
+
+
+    private CalcRequest prepareRequest() {
+        CalcRequest request = new CalcRequest();
+
+        BigDecimal buyMoney = toBigDecimal(buyMoneyEditText.getText().toString());
+        request.setBuyMoney(buyMoney);
+
+        Integer buyCount = toInteger(buyCountEditText.getText().toString()) * 100;
+        request.setBuyCount(buyCount);
+
+        BigDecimal sellMoney = toBigDecimal(sellMoneyEditText.getText().toString());
+        request.setSellMoney(sellMoney);
+
+        Integer sellCount = toInteger(buyCountEditText.getText().toString()) * 100;
+        request.setSellCount(sellCount);
+
+        Boolean etf = eftSwitchCompat.isChecked();
+        request.setEtf(etf);
+
+        return request;
+    }
 
     private String fromBigDecimal(BigDecimal value) {
         if (value == null) {
@@ -114,13 +138,5 @@ public class MainActivity extends AppCompatActivity {
         } catch (NumberFormatException e) {
             return 0;
         }
-    }
-
-    private boolean positive(BigDecimal value) {
-        return value != null && value.doubleValue() > 0;
-    }
-
-    private boolean positive(Integer value) {
-        return value != null && value > 0;
     }
 }
